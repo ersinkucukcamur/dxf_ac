@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Saha Pro V68.0 - Final Master</title>
+    <title>ersin.kucukcamur_dxf goruntuleyici</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -23,6 +23,20 @@
         /* UI Genel */
         #menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 998; backdrop-filter: blur(2px); }
         .ui-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: 16px; position: absolute; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.4); }
+
+        /* İmza Stili */
+        .signature {
+            position: absolute;
+            bottom: 45px; /* Ölçek barının hemen üzerinde */
+            left: 10px;
+            z-index: 1001;
+            font-size: 10px;
+            font-weight: 800;
+            color: rgba(0, 0, 0, 0.35); /* Silik görünüm */
+            pointer-events: none;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+        }
 
         /* Alt Ana Menü */
         .bottom-nav { bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; display: flex; justify-content: space-between; padding: 10px 20px; box-sizing: border-box; }
@@ -107,6 +121,8 @@
 
 <div id="menu-overlay" onclick="closeMenus()"></div>
 <div id="map"></div>
+
+<div class="signature" data-html2canvas-ignore="true">ersin.kucukcamur</div>
 
 <div id="m-proje" class="ui-card submenu">
     <button class="btn-sys btn-primary" onclick="document.getElementById('f-in').click()">📂 DOSYA YÜKLE (DXF / KMZ / KML)</button>
@@ -212,16 +228,13 @@
         document.getElementById('f-in').onchange = e => handleUpload(e.target.files[0]);
         map.on('move zoom', updateRulerInfo);
         initTicks();
-        // startGPS() BURADAN KALDIRILDI - Sadece butona basınca çalışacak.
     };
 
     // --- KONUM (BUTON TETİKLİ) ---
     function handleLocationClick() {
         if(userMarker) {
-            // Zaten izleniyor, sadece zoom yap
             map.flyTo(userMarker.getLatLng(), 19);
         } else {
-            // İzin iste ve başlat
             document.getElementById('gps-txt').innerText = "ARANIYOR";
             if(navigator.geolocation) {
                 gpsWatch = navigator.geolocation.watchPosition(
@@ -237,8 +250,6 @@
                         }
                         
                         document.getElementById('gps-txt').innerText = "TAKİPTE";
-                        
-                        // İlk buluşta zoom yap
                         if(isFirst) map.flyTo([lat, lng], 19);
                     }, 
                     (err) => { 
@@ -378,13 +389,12 @@
             }
         });
 
-        const nw = map.containerPointToLatLng([f.left, f.top]), ne = map.containerPointToLatLng([f.right, f.top]), se = map.containerPointToLatLng([f.right, f.bottom]), sw = map.containerPointToLatLng([f.left, f.bottom]);
+        const nw = map.containerPointToLatLng([f.left, f.top]), ne = map.containerPointToLatLng([r.right, f.top]), se = map.containerPointToLatLng([r.right, r.bottom]), sw = map.containerPointToLatLng([r.left, r.bottom]);
         kml += `<Placemark><name>ALAN_CERCEVESI</name><Style><LineStyle><color>ff0000ff</color><width>3</width></LineStyle></Style><LineString><coordinates>${nw.lng},${nw.lat},0 ${ne.lng},${ne.lat},0 ${se.lng},${se.lat},0 ${sw.lng},${sw.lat},0 ${nw.lng},${nw.lat},0</coordinates></LineString></Placemark></Document></kml>`;
 
         const z = new JSZip(); z.file("Saha.kml", kml); z.generateAsync({type:"blob"}).then(b => saveAs(b, "Saha_Pro_V68.kmz"));
     }
 
-    // --- YARDIMCILAR ---
     function transform(x, y) {
         let p = CONFIG.datum === 'ITRF' ? `+proj=tmerc +lat_0=0 +lon_0=${CONFIG.dom} +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs` : `+proj=tmerc +lat_0=0 +lon_0=${CONFIG.dom} +k=1 +x_0=500000 +y_0=0 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs`;
         const res = proj4(p, 'EPSG:4326', [parseFloat(x), parseFloat(y)]);
