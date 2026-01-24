@@ -16,50 +16,44 @@
 
     <style>
         :root { --blue: #007AFF; --dark: #1C1C1E; --glass: rgba(255,255,255,0.95); --ruler: #FF3B30; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; touch-action: none; /* Mobilde çift dokunma zoomunu engeller */ }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; touch-action: none; }
         
         #map { width: 100%; height: 100%; position: absolute; z-index: 1; }
 
-        /* UI Genel */
         #menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 998; backdrop-filter: blur(2px); }
         .ui-card { background: var(--glass); backdrop-filter: blur(20px); border-radius: 16px; position: absolute; z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.4); }
 
-        /* İmza Stili */
         .signature {
             position: absolute;
-            bottom: 45px; /* Ölçek barının hemen üzerinde */
+            bottom: 45px;
             left: 10px;
             z-index: 1001;
             font-size: 10px;
             font-weight: 800;
-            color: rgba(0, 0, 0, 0.35); /* Silik görünüm */
+            color: rgba(0, 0, 0, 0.35);
             pointer-events: none;
             letter-spacing: 0.5px;
             text-transform: lowercase;
         }
 
-        /* Alt Ana Menü */
         .bottom-nav { bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; display: flex; justify-content: space-between; padding: 10px 20px; box-sizing: border-box; }
         .nav-item { text-align: center; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; opacity: 0.8; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
         .nav-item:active { opacity: 0.4; transform: scale(0.95); }
         .nav-icon { font-size: 22px; margin-bottom: 2px; }
         .nav-text { font-size: 10px; font-weight: 700; color: var(--dark); letter-spacing: 0.5px; }
 
-        /* Proje Menüsü */
         .submenu { display: none; bottom: 100px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 380px; padding: 15px; flex-direction: column; gap: 8px; }
         .btn-sys { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; background: #fff; border: 1px solid #ddd; color: #333; transition: 0.2s; }
         .btn-sys:active { background: #f0f0f0; }
         .btn-primary { background: #000; color: #fff; border: none; }
         .active-p { background: var(--blue) !important; color: white !important; border: none; }
         
-        /* Grid Butonlar */
         .grid-dom { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 5px; }
         .btn-mini { padding: 8px 0; font-size: 10px; border-radius: 6px; border: 1px solid #eee; background: #fff; cursor: pointer; font-weight: bold; }
 
         .layer-box { max-height: 180px; overflow-y: auto; margin-top: 8px; border-top: 1px solid #eee; padding-top: 5px; }
         .layer-row { display: flex; justify-content: space-between; padding: 8px 10px; background: #f2f2f7; border-radius: 8px; margin-bottom: 4px; font-size: 11px; font-weight: 600; align-items: center; }
 
-        /* Vizör ve Cetvel */
         #vizor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; pointer-events: none; }
         .v-frame { 
             position: absolute; 
@@ -68,13 +62,11 @@
             display: flex; justify-content: center; align-items: center; 
         }
         
-        /* Cetvel Çentikleri */
         .tick-h { position: absolute; background: var(--ruler); width: 1px; height: 8px; top: 0; }
         .tick-h-bot { position: absolute; background: var(--ruler); width: 1px; height: 8px; bottom: 0; }
         .tick-v { position: absolute; background: var(--ruler); height: 1px; width: 8px; left: 0; }
         .tick-v-right { position: absolute; background: var(--ruler); height: 1px; width: 8px; right: 0; }
 
-        /* Cetvel Yazıları */
         .ruler-label {
             position: absolute; 
             background: #000; 
@@ -89,7 +81,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
-        /* Çıktı Kontrol Paneli (Yatay) */
         .output-controls { 
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
             width: 92%; max-width: 420px; pointer-events: auto; display: flex; gap: 8px; 
@@ -100,10 +91,8 @@
             display: flex; align-items: center; justify-content: center; gap: 5px;
         }
 
-        /* Yükleme Ekranı */
         #shutter { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
         
-        /* Scale Bar */
         .leaflet-control-scale-line { 
             border: 1px solid #333; border-top: none; line-height: 1.1; padding: 2px 5px; 
             color: #000; font-weight: bold; font-size: 10px; background: rgba(255,255,255,0.8); 
@@ -153,6 +142,10 @@
         <span class="nav-icon" id="gps-ico">📍</span>
         <span class="nav-text" id="gps-txt">KONUM</span>
     </div>
+    <div class="nav-item" id="nav-btn-go" onclick="toggleNavigate()">
+        <span class="nav-icon">↗️</span>
+        <span class="nav-text">ADRESE GİT</span>
+    </div>
     <div class="nav-item" onclick="openVizor()">
         <span class="nav-icon">🖨️</span>
         <span class="nav-text">ÇIKTI AL</span>
@@ -179,14 +172,13 @@
 <script>
     const CONFIG = { datum: 'ITRF', dom: 30 };
     let map, layers = {}, gpsWatch = null, userMarker = null;
+    let isNavMode = false;
     
-    // DXF Renkleri
     const ACI_COLORS = { 
         1:"#FF0000", 2:"#FFFF00", 3:"#00FF00", 4:"#00FFFF", 5:"#0000FF", 6:"#FF00FF", 
         7:"#FFFFFF", 8:"#808080", 9:"#C0C0C0", 250:"#333333", 251:"#555555" 
     };
 
-    // --- BING API (QUADKEY) ---
     function toQuadKey(x, y, z) {
         let q = "";
         for (let i = z; i > 0; i--) {
@@ -201,7 +193,6 @@
         getTileUrl: function(c) { return L.Util.template(this._url, { s:this._getSubdomain(c), type:this.options.type, quadkey:toQuadKey(c.x, c.y, c.z)}); }
     });
 
-    // --- BAŞLANGIÇ ---
     window.onload = () => {
         const googleSat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 22 });
         const googleStr = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 22 });
@@ -227,10 +218,18 @@
 
         document.getElementById('f-in').onchange = e => handleUpload(e.target.files[0]);
         map.on('move zoom', updateRulerInfo);
+        
+        map.on('click', (e) => {
+            if(isNavMode) {
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${e.latlng.lat},${e.latlng.lng}`;
+                window.open(url, '_blank');
+                toggleNavigate();
+            }
+        });
+
         initTicks();
     };
 
-    // --- KONUM (BUTON TETİKLİ) ---
     function handleLocationClick() {
         if(userMarker) {
             map.flyTo(userMarker.getLatLng(), 19);
@@ -242,34 +241,28 @@
                         const lat = p.coords.latitude;
                         const lng = p.coords.longitude;
                         const isFirst = !userMarker;
-                        
                         if(!userMarker) {
                             userMarker = L.circleMarker([lat, lng], { radius: 8, color: '#fff', fillColor: '#007AFF', fillOpacity: 1, weight: 3 }).addTo(map);
                         } else {
                             userMarker.setLatLng([lat, lng]);
                         }
-                        
                         document.getElementById('gps-txt').innerText = "TAKİPTE";
                         if(isFirst) map.flyTo([lat, lng], 19);
                     }, 
                     (err) => { 
-                        alert("Konum alınamadı. GPS açık mı ve HTTPS kullanılıyor mu?"); 
+                        alert("Konum alınamadı."); 
                         document.getElementById('gps-txt').innerText = "HATA";
                     }, 
                     { enableHighAccuracy: true, maximumAge: 0 }
                 );
-            } else {
-                alert("Tarayıcınız konum servisini desteklemiyor.");
             }
         }
     }
 
-    // --- DOSYA YÜKLEME ---
     async function handleUpload(file) {
         if(!file) return;
         const ext = file.name.split('.').pop().toLowerCase();
         const bounds = L.latLngBounds();
-        
         try {
             if(ext === 'dxf') {
                 const text = await file.text();
@@ -277,14 +270,12 @@
                 dxf.entities.forEach(ent => {
                     const lyrName = ent.layer || "0";
                     if(!layers[lyrName]) { layers[lyrName] = L.featureGroup().addTo(map); addLayerUI(lyrName); }
-                    
                     let color = "#00FFFF";
                     if(ent.colorIndex && ACI_COLORS[ent.colorIndex]) color = ACI_COLORS[ent.colorIndex];
                     else if(dxf.tables?.layer?.layers[lyrName]) {
                         const lCol = dxf.tables.layer.layers[lyrName].colorIndex;
                         if(ACI_COLORS[lCol]) color = ACI_COLORS[lCol];
                     }
-
                     if(['LINE','LWPOLYLINE','POLYLINE'].includes(ent.type)) {
                         const pts = (ent.vertices || [ent.start, ent.end]).map(v => {
                             const p = transform(v.x, v.y); bounds.extend(p); return p;
@@ -299,7 +290,6 @@
                     const kmlFile = Object.keys(zip.files).find(n => n.match(/\.kml$/i));
                     if(kmlFile) kmlText = await zip.file(kmlFile).async("string");
                 } else { kmlText = await file.text(); }
-
                 const geo = toGeoJSON.kml(new DOMParser().parseFromString(kmlText, "text/xml"));
                 L.geoJSON(geo, {
                     style: f => ({ color: f.properties.stroke || f.properties.color || "#FF0000", weight: 3 }),
@@ -312,7 +302,7 @@
                 }).addTo(map);
             }
             if(bounds.isValid()) { map.fitBounds(bounds, { padding: [50, 50], maxZoom: 21 }); toggleMenu('m-proje'); }
-        } catch(e) { alert("Dosya hatası!"); console.error(e); }
+        } catch(e) { alert("Hata!"); }
     }
 
     function addLayerUI(name) {
@@ -328,7 +318,6 @@
         });
     }
 
-    // --- VİZÖR & CETVEL ---
     function initTicks() {
         const c = document.getElementById('ticks-container'); c.innerHTML = '';
         for(let i=1; i<20; i++) c.innerHTML += `<div class="tick-h" style="left:${i*5}%"></div><div class="tick-h-bot" style="left:${i*5}%"></div>`;
@@ -345,30 +334,25 @@
         document.getElementById('lbl-seg').innerText = `Çizgi Aralığı: ${(w/20).toFixed(2)} m`;
     }
 
-    // --- RENDER (FOTOĞRAF) ---
     async function renderHighRes() {
         const f = document.getElementById('v-frame'), r = f.getBoundingClientRect();
         const nw = map.containerPointToLatLng([r.left, r.top]), ne = map.containerPointToLatLng([r.right, r.top]);
         const scaleFactor = (map.distance(nw, ne) * 10) / r.width;
-
         document.getElementById('shutter').style.display = 'flex';
         map.dragging.disable(); map.touchZoom.disable(); map.scrollWheelZoom.disable();
         await new Promise(res => setTimeout(res, 600));
-
         const canvas = await html2canvas(document.body, {
             scale: scaleFactor, useCORS: true, allowTaint: false,
             ignoreElements: el => el.getAttribute('data-html2canvas-ignore') === 'true', backgroundColor: null
         });
-
         const out = document.createElement('canvas'); out.width = r.width * scaleFactor; out.height = r.height * scaleFactor;
         out.getContext('2d').drawImage(canvas, r.left*scaleFactor, r.top*scaleFactor, r.width*scaleFactor, r.height*scaleFactor, 0, 0, out.width, out.height);
-        
-        saveAs(out.toDataURL("image/jpeg", 0.92), `Saha_V68_${Math.round(map.distance(nw,ne))}m.jpg`);
+        saveAs(out.toDataURL("image/jpeg", 0.92), `Saha_Foto_${Math.round(map.distance(nw,ne))}m.jpg`);
         document.getElementById('shutter').style.display = 'none';
         map.dragging.enable(); map.touchZoom.enable(); map.scrollWheelZoom.enable();
     }
 
-    // --- KMZ ÇIKTI ---
+    // --- KMZ ÇIKTI (RENKLİ & VİZÖR İÇİ) ---
     function exportKMZVisible() {
         const f = document.getElementById('v-frame').getBoundingClientRect();
         const bounds = L.latLngBounds(map.containerPointToLatLng([f.left, f.top]), map.containerPointToLatLng([f.right, f.bottom]));
@@ -377,20 +361,26 @@
         Object.keys(layers).forEach(ln => {
             if(map.hasLayer(layers[ln])) {
                 layers[ln].eachLayer(l => {
-                    if(l instanceof L.Polyline && l.getLatLngs().some(p => bounds.contains(p))) {
-                        let hex = (l.options.color || "#ffffff").replace('#','');
-                        if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
-                        const kmlColor = `ff${hex.substring(4,6)}${hex.substring(2,4)}${hex.substring(0,2)}`; 
-                        kml += `<Placemark><Style><LineStyle><color>${kmlColor}</color><width>2</width></LineStyle></Style><LineString><coordinates>`;
-                        l.getLatLngs().forEach(p => kml += `${p.lng},${p.lat},0 `);
-                        kml += `</coordinates></LineString></Placemark>`;
+                    if(l instanceof L.Polyline) {
+                        const latlngs = l.getLatLngs();
+                        // Vizör içinde en az bir noktası olan çizgileri al
+                        if(latlngs.some(p => bounds.contains(p))) {
+                            let hex = (l.options.color || "#ffffff").replace('#','');
+                            if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+                            // KML renk formatı: aabbggrr (Alpha, Blue, Green, Red)
+                            const kmlColor = `ff${hex.substring(4,6)}${hex.substring(2,4)}${hex.substring(0,2)}`; 
+                            kml += `<Placemark><Style><LineStyle><color>${kmlColor}</color><width>2</width></LineStyle></Style><LineString><coordinates>`;
+                            latlngs.forEach(p => kml += `${p.lng},${p.lat},0 `);
+                            kml += `</coordinates></LineString></Placemark>`;
+                        }
                     }
                 });
             }
         });
 
-        const nw = map.containerPointToLatLng([f.left, f.top]), ne = map.containerPointToLatLng([r.right, f.top]), se = map.containerPointToLatLng([r.right, r.bottom]), sw = map.containerPointToLatLng([r.left, r.bottom]);
-        kml += `<Placemark><name>ALAN_CERCEVESI</name><Style><LineStyle><color>ff0000ff</color><width>3</width></LineStyle></Style><LineString><coordinates>${nw.lng},${nw.lat},0 ${ne.lng},${ne.lat},0 ${se.lng},${se.lat},0 ${sw.lng},${sw.lat},0 ${nw.lng},${nw.lat},0</coordinates></LineString></Placemark></Document></kml>`;
+        // Vizör çerçevesini de KML'ye ekle (Kırmızı)
+        const nw = map.containerPointToLatLng([f.left, f.top]), ne = map.containerPointToLatLng([f.right, f.top]), se = map.containerPointToLatLng([f.right, f.bottom]), sw = map.containerPointToLatLng([f.left, f.bottom]);
+        kml += `<Placemark><name>VIZOR_ALANI</name><Style><LineStyle><color>ff0000ff</color><width>3</width></LineStyle></Style><LineString><coordinates>${nw.lng},${nw.lat},0 ${ne.lng},${ne.lat},0 ${se.lng},${se.lat},0 ${sw.lng},${sw.lat},0 ${nw.lng},${nw.lat},0</coordinates></LineString></Placemark></Document></kml>`;
 
         const z = new JSZip(); z.file("Saha.kml", kml); z.generateAsync({type:"blob"}).then(b => saveAs(b, "Saha_Pro_V68.kmz"));
     }
@@ -413,6 +403,18 @@
         updateRulerInfo();
     }
     function closeVizor() { document.getElementById('vizor').style.display='none'; }
+    
+    function toggleNavigate() {
+        isNavMode = !isNavMode;
+        const btn = document.getElementById('nav-btn-go');
+        if(isNavMode) {
+            btn.querySelector('.nav-text').style.color = '#007AFF';
+            btn.style.opacity = '1';
+        } else {
+            btn.querySelector('.nav-text').style.color = '#1C1C1E';
+            btn.style.opacity = '0.8';
+        }
+    }
 </script>
 </body>
 </html>
