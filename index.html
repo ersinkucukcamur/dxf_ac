@@ -15,6 +15,85 @@
     <script src="https://cdn.jsdelivr.net/npm/@tmcw/togeojson@4.5.0/dist/togeojson.umd.js"></script>
 
     <style>
+        /* ===== GÜNCELLEME BİLDİRİM MODALİ ===== */
+        #update-modal-overlay {
+            position: fixed; inset: 0; z-index: 99999;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        #update-modal {
+            background: #ffffff;
+            border-radius: 20px;
+            max-width: 420px; width: 100%;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            overflow: hidden;
+            animation: modalPop 0.35s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        @keyframes modalPop {
+            from { opacity:0; transform: scale(0.85) translateY(20px); }
+            to   { opacity:1; transform: scale(1) translateY(0); }
+        }
+        #update-modal-header {
+            background: linear-gradient(135deg, #007AFF 0%, #0055D4 100%);
+            padding: 28px 28px 22px;
+            text-align: center;
+        }
+        #update-modal-header .icon {
+            font-size: 42px; line-height:1; margin-bottom: 10px;
+        }
+        #update-modal-header h2 {
+            margin: 0; color: #fff;
+            font-size: 18px; font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #update-modal-body {
+            padding: 22px 28px 10px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #update-modal-body p {
+            margin: 0 0 10px;
+            font-size: 14.5px; color: #333; line-height: 1.6;
+        }
+        #update-modal-body .new-link {
+            display: flex; align-items: center; gap: 8px;
+            background: #f0f6ff; border: 1px solid #c0d8ff;
+            border-radius: 10px; padding: 10px 14px;
+            margin-bottom: 18px;
+        }
+        #update-modal-body .new-link span {
+            font-size: 13px; color: #007AFF; font-weight: 600;
+            word-break: break-all;
+        }
+        #update-modal-buttons {
+            padding: 0 28px 24px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .modal-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 13px 16px;
+            border: none; border-radius: 12px;
+            font-size: 14.5px; font-weight: 600; cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: transform 0.12s, opacity 0.12s;
+        }
+        .modal-btn:active { transform: scale(0.97); opacity: 0.85; }
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #007AFF, #0055D4);
+            color: #fff;
+        }
+        .modal-btn-secondary {
+            background: #f0f6ff; color: #007AFF;
+            border: 1px solid #c0d8ff;
+        }
+        .modal-btn-ghost {
+            background: transparent; color: #888;
+            border: 1px solid #e0e0e0;
+            font-size: 13.5px;
+        }
+        /* ===== SON ===== */
+
         :root { --blue: #007AFF; --dark: #1C1C1E; --glass: rgba(255,255,255,0.95); --ruler: #FF3B30; }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; touch-action: none; }
         
@@ -101,6 +180,40 @@
     </style>
 </head>
 <body>
+
+<!-- ===== GÜNCELLEME BİLDİRİM MODALİ ===== -->
+<div id="update-modal-overlay">
+    <div id="update-modal">
+        <div id="update-modal-header">
+            <div class="icon">🚀</div>
+            <h2>Yeni Sürüm Mevcut!</h2>
+        </div>
+        <div id="update-modal-body">
+            <p>Bu sayfa eski sürümdür. Daha fazla özellik ve iyileştirme içeren güncel sürüme aşağıdaki bağlantıdan ulaşabilirsiniz:</p>
+            <div class="new-link">
+                <span>🔗</span>
+                <a href="https://ersinkucukcamur.github.io/dxf/" target="_blank" style="color:#007AFF; font-weight:600; font-size:13px; word-break:break-all; text-decoration:none;">
+                    ersinkucukcamur.github.io/dxf/
+                </a>
+            </div>
+        </div>
+        <div id="update-modal-buttons">
+            <button class="modal-btn modal-btn-primary" onclick="window.open('https://ersinkucukcamur.github.io/dxf/','_blank')">
+                🌐 Yeni Sürüme Git
+            </button>
+            <button class="modal-btn modal-btn-secondary" id="btn-bookmark" onclick="tryBookmark()">
+                🔖 Yeni Bağlantıyı Yer İmlerine Kaydet
+            </button>
+            <button class="modal-btn modal-btn-secondary" id="btn-homescreen" onclick="tryAddToHome()">
+                📱 Ana Ekrana Bağlantı Oluştur
+            </button>
+            <button class="modal-btn modal-btn-ghost" onclick="closeUpdateModal()">
+                Eski Sürümle Devam Et
+            </button>
+        </div>
+    </div>
+</div>
+<!-- ===== SON ===== -->
 
 <div id="shutter" data-html2canvas-ignore="true">
     <div style="font-size: 40px; animation: pulse 1s infinite;">📸</div>
@@ -415,6 +528,76 @@
             btn.style.opacity = '0.8';
         }
     }
+</script>
+
+<script>
+// ===== GÜNCELLEME MODALİ =====
+const NEW_URL = 'https://ersinkucukcamur.github.io/dxf/';
+
+function closeUpdateModal() {
+    const overlay = document.getElementById('update-modal-overlay');
+    overlay.style.transition = 'opacity 0.25s ease';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 260);
+}
+
+// Yer imlerine kaydet
+function tryBookmark() {
+    const btn = document.getElementById('btn-bookmark');
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isMac = /Macintosh/i.test(navigator.userAgent);
+
+    let msg = '';
+    if (isIOS) {
+        msg = "📤 Paylaş → 'Yer İmlerine Ekle' seçeneğine dokunun.";
+    } else if (isAndroid) {
+        msg = "Chrome'da ⋮ menüsünden 'Yer imlerine ekle' seçeneğine dokunun.";
+    } else if (isMac) {
+        msg = 'Kısayol: Cmd + D';
+    } else {
+        msg = 'Kısayol: Ctrl + D';
+    }
+
+    btn.textContent = msg;
+    btn.style.whiteSpace = 'normal';
+    btn.style.lineHeight = '1.4';
+    btn.disabled = true;
+    btn.style.opacity = '0.75';
+    btn.style.cursor = 'default';
+}
+
+// Ana ekrana ekle
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+
+function tryAddToHome() {
+    const btn = document.getElementById('btn-homescreen');
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function() { deferredPrompt = null; });
+    } else if (isIOS) {
+        btn.textContent = "📤 Paylaş → 'Ana Ekrana Ekle' seçeneğine dokunun.";
+        btn.style.whiteSpace = 'normal';
+        btn.style.lineHeight = '1.4';
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+        btn.style.cursor = 'default';
+    } else {
+        btn.textContent = "Tarayıcı menüsünden 'Ana ekrana ekle' seçeneğini kullanın.";
+        btn.style.whiteSpace = 'normal';
+        btn.style.lineHeight = '1.4';
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+        btn.style.cursor = 'default';
+    }
+}
+// ===== SON =====
 </script>
 </body>
 </html>
